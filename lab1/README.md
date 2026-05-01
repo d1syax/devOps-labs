@@ -63,7 +63,7 @@ mywebapp/
 
 ### Клонування репозиторію
 ```bash
-git clone https://github.com/ТУТ_ТВІЙ_ЮЗЕР/mywebapp.git
+git clone https://github.com/d1syax/devOps-labs.git
 cd mywebapp
 ```
 
@@ -81,7 +81,7 @@ dotnet run -- --host 127.0.0.1 --port 3000 \
 
 ### Клонування репозиторію
 ```bash
-git clone https://github.com/ТУТ_ТВІЙ_ЮЗЕР/mywebapp.git
+git clone https://github.com/d1syax/devOps-labs.git
 cd mywebapp
 ```
 
