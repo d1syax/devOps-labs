@@ -5,17 +5,14 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ─── CLI args ──────────────────────────────────────────────────────────────────
-string dbHost     = builder.Configuration["db-host"] ?? "127.0.0.1";
-string dbPort     = builder.Configuration["db-port"] ?? "3306";
-string dbName     = builder.Configuration["db-name"] ?? "mywebapp";
-string dbUser     = builder.Configuration["db-user"] ?? "mywebapp";
+string dbHost     = builder.Configuration["db-host"]     ?? "127.0.0.1";
+string dbPort     = builder.Configuration["db-port"]     ?? "3306";
+string dbName     = builder.Configuration["db-name"]     ?? "mywebapp";
+string dbUser     = builder.Configuration["db-user"]     ?? "mywebapp";
 string dbPassword = builder.Configuration["db-password"] ?? "mywebapp";
-string appHost    = builder.Configuration["host"] ?? "127.0.0.1";
-string appPort    = builder.Configuration["port"] ?? "3000";
+string appHost    = builder.Configuration["host"]        ?? "127.0.0.1";
+string appPort    = builder.Configuration["port"]        ?? "3000";
 
-
-// ─── DB ────────────────────────────────────────────────────────────────────────
 var connectionString = $"Server={dbHost};Port={dbPort};Database={dbName};User={dbUser};Password={dbPassword};";
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -26,7 +23,6 @@ builder.WebHost.UseUrls($"http://{appHost}:{appPort}");
 
 var app = builder.Build();
 
-// ─── Health ────────────────────────────────────────────────────────────────────
 app.MapGet("/health/alive", () => Results.Ok("OK"));
 
 app.MapGet("/health/ready", async (AppDbContext db) =>
@@ -42,7 +38,6 @@ app.MapGet("/health/ready", async (AppDbContext db) =>
     }
 });
 
-// ─── Root ──────────────────────────────────────────────────────────────────────
 app.MapGet("/", (HttpContext ctx) =>
 {
     if (!Wants(ctx, "text/html")) return Results.StatusCode(406);
@@ -51,15 +46,14 @@ app.MapGet("/", (HttpContext ctx) =>
         <!DOCTYPE html><html><head><title>mywebapp</title></head><body>
         <h1>Simple Inventory</h1>
         <ul>
-          <li>GET /items — list all items</li>
-          <li>POST /items — create item (name, quantity)</li>
+          <li>GET /items - list all items</li>
+          <li>POST /items - create item (name, quantity)</li>
           <li>GET /items/{id} — get item details</li>
         </ul>
         </body></html>
         """, "text/html");
 });
 
-// ─── GET /items ────────────────────────────────────────────────────────────────
 app.MapGet("/items", async (AppDbContext db, HttpContext ctx) =>
 {
     var items = await db.Items.OrderBy(i => i.Id).ToListAsync();
@@ -75,7 +69,6 @@ app.MapGet("/items", async (AppDbContext db, HttpContext ctx) =>
     return Results.Content(html.ToString(), "text/html");
 });
 
-// ─── POST /items ───────────────────────────────────────────────────────────────
 app.MapPost("/items", async (AppDbContext db, HttpContext ctx) =>
 {
     string? name = null;
@@ -109,7 +102,6 @@ app.MapPost("/items", async (AppDbContext db, HttpContext ctx) =>
         "text/html", statusCode: 201);
 });
 
-// ─── GET /items/{id} ──────────────────────────────────────────────────────────
 app.MapGet("/items/{id:int}", async (int id, AppDbContext db, HttpContext ctx) =>
 {
     var item = await db.Items.FindAsync(id);
