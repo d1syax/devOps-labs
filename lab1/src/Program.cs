@@ -16,7 +16,7 @@ string appPort    = builder.Configuration["port"]        ?? "3000";
 var connectionString = $"Server={dbHost};Port={dbPort};Database={dbName};User={dbUser};Password={dbPassword};";
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    options.UseMySql(connectionString, new MariaDbServerVersion(new Version(10, 11))));
 
 builder.Host.UseSystemd();
 builder.WebHost.UseUrls($"http://{appHost}:{appPort}");
