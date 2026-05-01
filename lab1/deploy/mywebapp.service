@@ -1,0 +1,18 @@
+[Unit]
+Description=mywebapp — Simple Inventory
+After=network.target mariadb.service
+Requires=mariadb.service
+Requires=mywebapp.socket
+
+[Service]
+Type=simple
+User=app
+Group=app
+WorkingDirectory=/opt/mywebapp
+ExecStartPre=bash -c 'mysql -h 127.0.0.1 -u mywebapp -pmywebapp mywebapp < /opt/mywebapp/init_db.sql'
+ExecStart=/opt/mywebapp/mywebapp \
+    --db-host 127.0.0.1 --db-port 3306 \
+    --db-name mywebapp  --db-user mywebapp --db-password mywebapp \
+    --host 127.0.0.1    --port 3000
+Restart=on-failure
+RestartSec=5
