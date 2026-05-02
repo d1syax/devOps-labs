@@ -1,166 +1,139 @@
-# Лабораторна робота 1
-## Тема: Розгортання Web-сервісу з автоматизацією
-**Працював над лабораторною роботою:**
-* **Бойко Данило Сергійович**
+# Simple Inventory Service
+Project to understand how to deploy without docker
+IM-41 Boiko Danylo
 
-## Варіант індивідуальних завдань
-N = 2 \
-V<sub>2</sub> = (N % 2) + 1 = 1 \
-V<sub>3</sub> = (N % 3) + 1 = 3 \
-V<sub>5</sub> = (N % 5) + 1 = 3
+# Variables
++ Variant: 2 (V2 = 1, V3 = 3, V5 = 3)
++ Web-app: Simple Inventory
++ Config: command line arguments
++ App port: 3000
++ Database: MariaDB
 
-## Документація по розробленому веб-застосунку
-Simple Inventory - сервіс обліку обладнання
+# Local run app
 
-Об'єкт інвентарю містить наступні поля:
-- id
-- name
-- quantity
-- created_at
-
-API сервісу складається з 3 ендпоінтів:
-- `GET /items` — вивести список усіх предметів в інвентарі (id, name)
-- `POST /items` (name, quantity) — створити новий запис у системі обліку
-- `GET /items/<id>` — вивести детальну інформацію по запису (id, name, quantity, created_at)
-
-Системні ендпоінти:
-- `GET /` — повертає HTML-сторінку зі списком усіх ендпоінтів
-- `GET /health/alive` — завжди повертає `HTTP 200 OK`
-- `GET /health/ready` — перевіряє підключення до бази даних. Повертає `HTTP 200 OK`, якщо підключення успішне, інакше `HTTP 500`
-
-## Порт застосунку та конфігурація
-Конфігурація через аргументи командного рядка \
-**Порт застосунку: 3000** \
-**База даних: MariaDB**
-
-## Реалізація веб-застосунку
-- **Мова програмування:** C# (.NET 9)
-- **Фреймворк:** ASP.NET Core Minimal API
-- **ORM:** Entity Framework Core + Pomelo.EntityFrameworkCore.MySql
-
-## Структура проекту
-```
-mywebapp/
-├── src/
-│   ├── Models/
-│   │   └── Item.cs
-│   ├── Data/
-│   │   ├── AppDbContext.cs
-│   │   └── AppDbContextFactory.cs
-│   ├── Migrations/
-│   ├── Program.cs
-│   └── mywebapp.csproj
-├── deploy/
-│   ├── init_db.sql
-│   ├── mywebapp.service
-│   ├── mywebapp.socket
-│   └── nginx.conf
-├── install.sh
-└── README.md
-```
-
-# Налаштування середовища
-
-### Клонування репозиторію
+### Start MariaDB via Docker
 ```bash
-git clone https://github.com/d1syax/devOps-labs.git
-cd mywebapp
+docker run -d \
+  --name mariadb \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=mywebapp \
+  -e MYSQL_USER=mywebapp \
+  -e MYSQL_PASSWORD=mywebapp \
+  -p 3306:3306 \
+  mariadb:10.11
 ```
 
-### Локальний запуск (для розробки)
+### Run app
 ```bash
 cd src
-dotnet run -- --host 127.0.0.1 --port 3000 \
+dotnet run -- \
+  --host 127.0.0.1 --port 3000 \
   --db-host 127.0.0.1 --db-port 3306 \
   --db-name mywebapp --db-user mywebapp --db-password mywebapp
 ```
 
-# Документація по розгортанню
-
-- Образ для віртуальної машини: [Ubuntu Server 22.04 LTS](https://ubuntu.com/download/server)
-
-### Клонування репозиторію
+# Linux run app
++ Use ubuntu [image](https://ubuntu.com/download/server)
++ Clone repo
 ```bash
 git clone https://github.com/d1syax/devOps-labs.git
-cd mywebapp
 ```
-
-### Запуск скрипта розгортання
++ Go to project folder
+```bash
+cd devOps-labs/lab1
+```
++ Run script
 ```bash
 sudo bash install.sh
 ```
 
-# Тестування
+# API
+```http request
+# Return OK if app run
+GET /health/alive
+###
+# Return OK if DB connected
+GET /health/ready
+###
+# List of endpoints
+GET /
+Accept: text/html
+###
+# List of items (id, name)
+GET /items
+###
+# Create a new item
+POST /items
+###
+# Item details by id
+GET /items/<id>
+```
+
+# Testing
+Run these commands from the virtual machine terminal to verify the deployment, network restrictions, and user permissions.
 
 ### 1. Nginx & API Endpoints
-
-- Тест кореневого ендпоінту (має повернути HTML-сторінку)
++ Test root endpoint (should return HTML page)
 ```bash
 curl -i -H "Accept: text/html" http://localhost/
 ```
-
-- Тест health-check ендпоінтів
++ Test health check
 ```bash
 curl -i http://localhost/health/alive
 curl -i http://localhost/health/ready
 ```
-
-- Тест бізнес-логіки GET із заголовком Accept: application/json
++ Test business logic GET with JSON accept header
 ```bash
 curl -i -H "Accept: application/json" http://localhost/items
 ```
-
-- Тест бізнес-логіки GET із заголовком Accept: text/html
++ Test business logic GET with HTML accept header
 ```bash
 curl -i -H "Accept: text/html" http://localhost/items
 ```
-
-- Тест бізнес-логіки POST
++ Test business logic POST (should return 201 Created)
 ```bash
 curl -i -X POST -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
   -d '{"name":"Laptop","quantity":5}' http://localhost/items
 ```
-
-- Тест отримання конкретного запису
++ Test item details
 ```bash
 curl -i -H "Accept: application/json" http://localhost/items/1
 ```
 
-### 2. Користувачі та права доступу
-
-- `teacher` user (пароль за замовчуванням: `12345678`)
+### 2. Users and Permissions
++ Test `teacher` user (Default password: `12345678`)
 ```bash
 su - teacher
-sudo ls /root
+sudo ls /root  # Expectation: Success (has admin rights)
 exit
 ```
-
-- `operator` user (пароль за замовчуванням: `12345678`)
++ Test `operator` user (Default password: `12345678`)
 ```bash
 su - operator
-sudo systemctl restart mywebapp
-sudo ls /root   # має повернути Permission denied
+sudo systemctl restart mywebapp  # Expectation: Success (allowed command)
+sudo ls /root                    # Expectation: Permission denied
 exit
 ```
-
-- Підтвердження що користувач за замовчуванням заблокований
++ Verify default cloud user is locked
 ```bash
 sudo passwd -S ubuntu
 ```
 
-# Результати автоматизації
-
-- Перевірка того, що веб-застосунок працює
+### 3. Systemd Service & Automation Artifacts
++ Verify the app is running
 ```bash
 sudo systemctl status mywebapp
 ```
-
-- Перевірка того, що сокет активний
++ Verify nginx is running
 ```bash
-sudo systemctl status mywebapp.socket
+sudo systemctl status nginx
 ```
-
-- Перевірка того, що скрипт створив файл із номером варіанту
++ Verify MariaDB is running
+```bash
+sudo systemctl status mariadb
+```
++ Verify the automation script created the grade book
 ```bash
 sudo cat /home/student/gradebook
 ```
