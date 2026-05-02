@@ -9,14 +9,14 @@ apt-get update -qq
 apt-get install -y -qq mariadb-server mariadb-client nginx dotnet-sdk-8.0
 
 echo "==> [2] Creating users..."
-id -u app     &>/dev/null || useradd --system --no-create-home --shell /sbin/nologin app
+id -u app      &>/dev/null || useradd --system --no-create-home --shell /sbin/nologin app
 
-id -u student &>/dev/null || useradd -m -s /bin/bash student
+id -u student  &>/dev/null || useradd -m -s /bin/bash student
 echo "student:12345678" | chpasswd
 chage -d 0 student
 usermod -aG sudo student
 
-id -u teacher &>/dev/null || useradd -m -s /bin/bash teacher
+id -u teacher  &>/dev/null || useradd -m -s /bin/bash teacher
 echo "teacher:12345678" | chpasswd
 chage -d 0 teacher
 usermod -aG sudo teacher
