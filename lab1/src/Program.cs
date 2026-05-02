@@ -80,7 +80,10 @@ app.MapPost("/items", async (AppDbContext db, HttpContext ctx) =>
 
     if ((ctx.Request.ContentType ?? "").Contains("application/json"))
     {
-        var body = await System.Text.Json.JsonSerializer.DeserializeAsync<ItemRequest>(ctx.Request.Body);
+        var body = await System.Text.Json.JsonSerializer.DeserializeAsync<ItemRequest>(
+            ctx.Request.Body,
+            new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+        );
         name     = body?.Name;
         quantity = body?.Quantity ?? 0;
     }
