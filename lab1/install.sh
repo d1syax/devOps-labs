@@ -21,7 +21,7 @@ echo "teacher:12345678" | chpasswd
 chage -d 0 teacher
 usermod -aG sudo teacher
 
-id -u operator &>/dev/null || useradd -m -s /bin/bash operator
+id -u operator &>/dev/null || useradd -m -s /bin/bash -U operator
 echo "operator:12345678" | chpasswd
 chage -d 0 operator
 
