@@ -59,7 +59,9 @@ echo "==> [6] Installing systemd service..."
 cp "$REPO_DIR/deploy/mywebapp.service" /etc/systemd/system/mywebapp.service
 cp "$REPO_DIR/deploy/mywebapp.socket"  /etc/systemd/system/mywebapp.socket
 systemctl daemon-reload
-systemctl enable --now mywebapp.socket
+systemctl stop mywebapp.socket 2>/dev/null || true
+systemctl disable mywebapp.socket 2>/dev/null || true
+systemctl enable --now mywebapp
 
 echo "==> [7] Configuring nginx..."
 cp "$REPO_DIR/deploy/nginx.conf" /etc/nginx/sites-available/mywebapp

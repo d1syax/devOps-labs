@@ -2,14 +2,17 @@
 Description=mywebapp — Simple Inventory
 After=network.target mariadb.service
 Requires=mariadb.service
-Requires=mywebapp.socket
 
 [Service]
 Type=simple
 User=app
 Group=app
 WorkingDirectory=/opt/mywebapp
+Environment=ASPNETCORE_URLS=http://127.0.0.1:3000
 ExecStartPre=bash -c 'mysql -h 127.0.0.1 -u mywebapp -pmywebapp mywebapp < /opt/mywebapp/init_db.sql'
 ExecStart=/opt/mywebapp/mywebapp --db-host 127.0.0.1 --db-port 3306 --db-name mywebapp --db-user mywebapp --db-password mywebapp
 Restart=on-failure
 RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
