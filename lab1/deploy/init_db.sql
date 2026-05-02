@@ -5,11 +5,12 @@
 ) CHARACTER SET=utf8mb4;
 
 START TRANSACTION;
+
 DROP PROCEDURE IF EXISTS MigrationsScript;
 DELIMITER //
 CREATE PROCEDURE MigrationsScript()
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM `__EFMigrationsHistory` WHERE `MigrationId` = '20260501105516_InitialCreate') THEN
+    IF NOT EXISTS(SELECT 1 FROM `__EFMigrationsHistory` WHERE `MigrationId` = '20260502061440_InitialCreate') THEN
 
     ALTER DATABASE CHARACTER SET utf8mb4;
 
@@ -23,7 +24,7 @@ DROP PROCEDURE IF EXISTS MigrationsScript;
 DELIMITER //
 CREATE PROCEDURE MigrationsScript()
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM `__EFMigrationsHistory` WHERE `MigrationId` = '20260501105516_InitialCreate') THEN
+    IF NOT EXISTS(SELECT 1 FROM `__EFMigrationsHistory` WHERE `MigrationId` = '20260502061440_InitialCreate') THEN
 
     CREATE TABLE `Items` (
         `Id` int NOT NULL AUTO_INCREMENT,
@@ -43,7 +44,7 @@ DROP PROCEDURE IF EXISTS MigrationsScript;
 DELIMITER //
 CREATE PROCEDURE MigrationsScript()
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM `__EFMigrationsHistory` WHERE `MigrationId` = '20260501105516_InitialCreate') THEN
+    IF NOT EXISTS(SELECT 1 FROM `__EFMigrationsHistory` WHERE `MigrationId` = '20260502061440_InitialCreate') THEN
 
     CREATE INDEX `idx_items_created_at` ON `Items` (`CreatedAt`);
 
@@ -57,10 +58,10 @@ DROP PROCEDURE IF EXISTS MigrationsScript;
 DELIMITER //
 CREATE PROCEDURE MigrationsScript()
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM `__EFMigrationsHistory` WHERE `MigrationId` = '20260501105516_InitialCreate') THEN
+    IF NOT EXISTS(SELECT 1 FROM `__EFMigrationsHistory` WHERE `MigrationId` = '20260502061440_InitialCreate') THEN
 
     INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-    VALUES ('20260501105516_InitialCreate', '9.0.0');
+    VALUES ('20260502061440_InitialCreate', '8.0.0');
 
     END IF;
 END //
