@@ -1,6 +1,7 @@
 # Simple Inventory Service
 Project to understand how to deploy without docker
-IM-41 Boiko Danylo
+
+**IM-41 Boiko Danylo**
 
 # Variables
 + Variant: 2 (V2 = 1, V3 = 3, V5 = 3)
