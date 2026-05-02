@@ -45,6 +45,7 @@ FLUSH PRIVILEGES;
 SQL
 
 echo "==> [4] Building app..."
+systemctl stop mywebapp 2>/dev/null || true
 mkdir -p "$APP_DIR"
 cd "$REPO_DIR/src"
 dotnet publish -c Release -r linux-x64 --self-contained true -o "$APP_DIR"
